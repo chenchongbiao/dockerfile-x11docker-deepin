@@ -22,7 +22,7 @@
 #
 # See x11docker --help for further options.
 
-FROM linuxdeepin/beige:latest
+FROM linuxdeepin/deepin:latest
 
 ENV SHELL=/bin/bash
 ENV LANG=en_US.UTF-8
@@ -44,7 +44,6 @@ RUN apt-get update && \
         deepin-keyring \
         locales-all \
         mesa-utils \
-        mesa-utils-extra \
         vim \
         sudo && \
     /cleanup
@@ -60,49 +59,49 @@ RUN apt-get update && \
 
 # deepin-desktop-environment-core
 RUN apt-get update && \
-    env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    env DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        dde-api-proxy \
+        dde-application-manager \
         dde-clipboard \
         dde-control-center \
+        dde-daemon \
         dde-desktop \
-        dde-dock \
+        dde-shell \
         dde-file-manager \
-        dde-launcher \
+        dde-launchpad \
+        dde-permission-manager \
         dde-qt5integration \
+        dde-qt6integration \
+        dde-session \
+        dde-session-shell \
         dde-session-ui \
         deepin-default-settings \
-        deepin-wallpapers-nonfree \
         deepin-desktop-base \
-        deepin-icon-theme \
+        deepin-wallpapers-nonfree \
+        deepin-desktop-schemas \
         deepin-desktop-theme \
-        fonts-noto \
-        deepin-terminal \
-        startdde  \
+        deepin-icon-theme \
         deepin-kwin-x11 \
-        deepin-kwin-wayland \
-        dde-daemon \
-        dde-session-shell \
-        dde-session \
-        dde-permission-manager \
-        dde-application-manager \
-        dde-api-proxy && \
+        deepin-terminal \
+        lastore-daemon \
+        startdde  \
+        deepin-osconfig && \
     /cleanup
 
 # deepin-desktop-environment-extras
 RUN apt-get update && \
     env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        dde-dconfig-daemon \
         dcc-network-plugin \
-        dock-network-plugin \
         dss-network-plugin \
         deepin-sync-daemon \
         dde-api \
         dde-disk-mount-plugin \
-        dde-dock-onboard-plugin \
         deepin-system-monitor \
         dde-widgets \
         systemd-timesyncd \
         libimageeditor \
         uimg-installer \
+        fonts-noto \
         deepin-app-store \
         deepin-home-appstore-daemon \
         deepin-app-store-runtime \
@@ -111,14 +110,17 @@ RUN apt-get update && \
         dde-file-manager-plugins \
         dde-file-manager-common-plugins \
         dde-file-manager-daemon-plugins \
-        dde-file-manager-preview-plugins && \
+        dde-file-manager-preview-plugins \
+        uos-ai && \
     /cleanup
 
 # 添加输入法支持
 ENV XMODIFIERS=@im=fcitx QT4_IM_MODULE=fcitx QT_IM_MODULE=fcitx GTK_IM_MODULE=fcitx
 RUN apt-get update && \
     env DEBIAN_FRONTEND=noninteractive apt-get install -y \
-        fcitx-sunpinyin && \
+        fcitx5-frontend-qt6 \
+        fcitx5-pinyin-gui \
+        fcitx5-unikey && \
     mkdir -p /etc/xdg/autostart && \
     echo "[Desktop Entry]\n\
 Encoding=UTF-8\n\
@@ -144,5 +146,5 @@ RUN apt-get update && \
 #     dde-session" > /etc/rc.local && \
 #     chmod +x /etc/rc.local
 # 给session会话添加x11变量
-RUN sed -i '/WatchdogSec=3min/{n;s/^/XDG_SESSION_TYPE=x11\n/}' /lib/systemd/system/systemd-logind.service
+# RUN sed -i '/WatchdogSec=3min/{n;s/^/XDG_SESSION_TYPE=x11\n/}' /lib/systemd/system/systemd-logind.service
 CMD ["dde-session"]
